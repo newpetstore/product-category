@@ -1,0 +1,5 @@
+
+rootProject.name = 'product-category'
+
+include 'domain'
+

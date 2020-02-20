@@ -1,0 +1,12 @@
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+	        url 'https://dl.bintray.com/newpetstore/petstore'
+	    }
+	}
+}
+
+subprojects {
+    version = '1.0.0'
+}

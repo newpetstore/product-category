@@ -1,0 +1,46 @@
+language: java
+install: true
+sudo: false
+os: linux
+dist: trusty
+services:
+- docker
+jdk:
+- openjdk11
+- openjdk12
+script:
+- "./gradlew build test integrationTest jacocoTestReport"
+after_success:
+- bash <(curl -s https://codecov.io/bash)
+before_cache:
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+jobs:
+  include:
+  - stage: SpringBoot App - Docker Push
+    jdk: openjdk11
+    script:
+    - "./gradlew clean build -x test --no-daemon"
+    - application/springboot/docker-build.sh $TRAVIS_TAG
+    - application/springboot/docker-push.sh $TRAVIS_TAG
+    if: tag IS present
+  - stage: Github Release
+    jdk: openjdk11
+    script: skip
+    deploy:
+      provider: releases
+      api_key:
+        secure: HhTwRNJGFjBTz7pABDsmyYOwIl1OJm/hFUgTwe8FYDF+OyFRoh0nUkDmxHhmDLmZlpGqUBfWXDvrpgPXnDDAp6A0pv7yKq7yOdN9u2fBzeE0lUDbwT+EbgSAOBm+zJoT25syrBfaILfRg4LHceR7ZGHVzvJKg86d3xIY+O0qGijMIPqWdM7wavXsAYQBJBCQ8aZhEk/B/+7OY7U5FvkWD/1KJC1LjXN6qqM5VUKj8JuwcOwCm91caThd8HSitm5pHdZL1xmGa05C448b53odiKz5LneYv7jbxrz5p7P9IH+8V6aVZ+NSWBvUPOXnqy9ne3LY4dQbNnv+OZNvAgjau2zW/Th49IIv1IuMkAqzw/DjzRXaGjjAsESIlGjr+ymIDwvyvMYaLNnX7mdy/PsGLC7gZv1ByMIifgsgOBLy0Dri73GSTJ94qvqMBo+m/mLsQU1bhDFm9dpgKbxqdXb1Jc1yhYOGABTDtMjc1owEc5vW9XW4qynKzCYXoUl1cRjiAvyi3NEm+Hb/bP+0Y5s55Imw114fsJ/7ZMmuOvrpBIw7Md2htuMSTwn2iRjzEslUmW/6oimmHpZd4wCC+Lxy0hznQT6lhg4U5qyeee4C+SyAJKa8w7kKWOG7kuZqoE3hKpah/L2C6n9ON63unsdJ7yS7NWDJanbIC5BPUrFSQ+U=
+      skip_cleanup: true
+      on:
+        tags: true
+env:
+  global:
+  - DOCKER_REGISTRY=newpetstore-docker-docker.bintray.io
+  - secure: u7AUQHh99sMzHdmOQHkjo8/dGkeooo0FB/iP1RoYl/mint4FTq2IuhmqrxTCg+DQOt5znYPIN4n512X/jxximXzI6lNBvkwDV1+U3YOb4G1OkDxpQ0zR6tNILbmEga3jyH2xxaUGYU0UD1LCPeqQFlIQBYJYgK7wR6Aq63n2BBMtSD/myowqSYCoxAHDpFND8+AYU1ZfsVVWmp2ycFWVIYVWkBSMJs06WIi/0NFXqielV9GUHkGgHotvI7/wtrF0VgrcUvido/tKbrkHEznAYzP80BbpESWwGqmqPKosuymoQ6SeeK44Ph0S7b1W75BYQpjKH6dLK5KXIVgf9woPD6Nv8N/mxSEQw3000g7nGJIkj+IL/s7jKvpjC0/EPHLuOU6BTssiRJuYtHoIErhW6lchVXPR28hgi2uGGoAoop4yyiLGiw8CkYNDpHTnbdlrIAv4uNDHnb030uI2kwX50vk7HJLsY7XoaaSJGRPHYxm1KsV0H1JSCNGrguHk7rHqvQY2fiZeLlydgItUPocQhylgdFRImP7UxKgjJpB59ZXX6Aw+sid4ZvdyoU4RfWlKqTXWQkUJJBK9GC8WDvmlpDnJC2d6DhpaP+HmvXm0ZlUzFAtqtdmhre2dhfy2628K0PPB9Iq1JKK+q7NXg6etsUi67kSLR5OF5gdoY453LzM=
+  - secure: qu+u4tvTsAL8Gi2PFcnl86pnNmz8lLl6q1iR/3o4czPtYtteQ95sMAW3oANiPjhhgIfn3+UShZ/nBLEd7zn4fd8L82z/cVdVsy0NzXz2pwEbDW2GbBLW7L2Per9y66CO0xsaZDX6lWIcTlAkEIDr+7X5Wmr9V7dg619QSuPbzn+wvSHP54znKpihReqngMPieeUXPUR5tgH3KUcEhdGmujPrB9OM2zLQ4D7Mp0rDKY7DXkbr9Sf2Qlicn3sD7henhArjGR6SGip/81rcj7LSPMGjiG18UkNbsdQWHqpHQJ5zVh6LPHFwWQ0H0s7ogc5vMaMSDrdsBGOT+ukYvVHAepXkSYcWpAanSsf0A1JcWlI3mn0NTXDRZAH4XXUZTZ7/T82efPsrpmviD/HlPMhSYxxYDTFiZgioCh2zcJ8ML5mRrpHTvZYyfCK58MKBN6jYD8JrEF3sXZSEDKUv36lDg0S5X+qj8cGCv7JF+mCQmmwilMsuHx55ecWqtOuKqDARK7BC6JJe9WtqUXzlJlgm+eLjcr9k4Nw7m23EVjj128ljmPUf80GJ+cUsHI1QYHMtxhvAPyZpNdvq7ZFIorKHhe8HlS5/rh8p8qbYdTOJocQK3VMwd/rpr+mEG0+2mdXgm+IROuY3FW+CSpQbA/PIHHdTpu5Ng3ZBTRHa2aFnjGY=
+  - secure: iiLFYCW4RL+L8QI6QE+KiXCh5aBgm7MOLd3sqOZRl70U7RylKSMiZa+6O2nPLuJYmjz9A0860jHgAnMp8wXsoYdgH5xTf9uOyU1MzYUgOCT5+VjszMUg8OPQJs9coi8JoC8yi6dhorn+9b/mD6SDMisuTtu3i1NsoQQSRqDN/EXhfPW7BYMuapVOCLMdneKSzWf+TTEPIuEwppGOGwa2YWBaI+GvIDvfsJBhimHK4TkDHy4gqpMG+cxWEc19PD5ol5/sSEQ+DzwQN6e/kHYpxWmqUyVyEQmyyeV1pQd8QqlhbdSzaSokJntecAOxW0FapdHUJ2DSQv91crSZ4hqlz6FLgFENLnNA1gUaymXtfdBPPWW0u4zZMzP45AlIJGxuxeccT1HrgOo4XbLqczctcEUd1yX59Ki0w4gwyoqTLjSnzES8s6xUB9OaRJJnr3cmZKTMk5MJ8ZbahzzVdYdkrNuNkEljgQHK3fzEEI7b6JBOr1DZWlKWUvtFJIjJ7uzDhQ8mdLKhCywd6e9cTkkENDpgZ3XT2ZI/185RJ2dyWDDqX+D4RlbvGBu9jaAS7PE/RIDREIlpUP/nIgLTiaxDhK608A7JpfsCcMhWAp4dbpZEI4XduSM1SsPZxQsPx63hyOEufVVaX955BR5iN6KA7DuMonSr2i+QjGsZ9xPxNGE=
