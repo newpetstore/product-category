@@ -37,7 +37,7 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter:2.2.1.RELEASE'
     testImplementation('org.springframework.boot:spring-boot-starter-test:2.2.1.RELEASE'){
-        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation 'org.springframework.cloud:spring-cloud-starter:2.2.1.RELEASE'
 

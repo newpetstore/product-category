@@ -1,5 +1,5 @@
 /*
- * Java (TM) Pet Store Modernized Edition - 2019
+ * Java (TM) Pet Store Modernized Edition - 2020
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,30 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package petstore.category.usecase.model;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+package petstore.category.usecase.port;
 
 /**
+ * Identity generator for categories.
  *
  * @author fabiojose
- *
  */
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode
-@NoArgsConstructor
-@AllArgsConstructor
-public class CategoryCreated {
+public interface CategoryIdGenerator {
 
-	private String id;
-	private String name;
-	private String description;
-
+    /**
+     * @return Unique identification for categories entities.
+     */
+    String nextId();
 }

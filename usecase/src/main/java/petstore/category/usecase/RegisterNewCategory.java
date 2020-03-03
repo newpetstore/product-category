@@ -1,5 +1,5 @@
 /*
- * Java (TM) Pet Store Modernized Edition - 2019
+ * Java (TM) Pet Store Modernized Edition - 2020
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,35 +17,53 @@ package petstore.category.usecase;
 
 import java.util.Objects;
 
+import org.mapstruct.factory.Mappers;
+
 import petstore.category.domain.Category;
 import petstore.category.domain.CategoryValidationException;
 import petstore.category.usecase.exception.CategoryAlreadyExistsException;
 import petstore.category.usecase.port.CategoryDatastore;
+import petstore.category.usecase.port.CategoryIdGenerator;
+import petstore.category.usecase.model.CategoryCreated;
+import petstore.category.usecase.model.CategoryCreatedMapper;
+import petstore.category.usecase.model.NewCategory;
+import petstore.category.usecase.model.NewCategoryMapper;
 
 /**
  *
  * @author fabiojose
  *
  */
-public class CreateCategory {
+public class RegisterNewCategory {
 
-	private final CategoryDatastore categories;
+    private final CategoryDatastore categories;
 
-	public CreateCategory(CategoryDatastore categories) {
-		this.categories = Objects.requireNonNull(categories);
+	private final NewCategoryMapper mapper;
+
+    /**
+     * @throws NullPointerException When any argument is {@code null}
+     */
+    public RegisterNewCategory(CategoryDatastore categories, 
+            CategoryIdGenerator idGenerator) {
+        this.categories = Objects.requireNonNull(categories);
+
+        this.mapper = Mappers.getMapper(NewCategoryMapper.class);
+		this.mapper.setGenerator(Objects.requireNonNull(idGenerator));
 	}
 
 	/**
 	 *
-	 * @param category An instance to create inside the domain
+	 * @param newCategory An instance to create inside the domain
 	 * @throws CategoryAlreadyExistsException When the same entity already
 	 * exists inside the domain
 	 * @throws CategoryValidationException When the entity instance is invalid
 	 * @throws NullPointerException When category argument is <code>null</code>
 	 */
-	public void create(Category category) {
+	public CategoryCreated create(NewCategory newCategory) {
 
-		Category _category = Objects.requireNonNull(category);
+        NewCategory _newCategory = Objects.requireNonNull(newCategory);
+        
+        Category _category = mapper.map(_newCategory);
 
 		// Already exists?
 		categories.get(_category.getId())
@@ -58,6 +76,7 @@ public class CreateCategory {
 
 		//TODO Fire event about category creation?
 
+        return CategoryCreatedMapper.INSTANCE.map(_category);
 	}
 
 }
