@@ -87,4 +87,6 @@ jacocoTestReport {
 
 check.dependsOn jacocoTestReport
 
-mainClassName = 'petstore.category.spring.Entrypoint'
+bootJar {
+    mainClassName = 'petstore.category.spring.Entrypoint'
+}
