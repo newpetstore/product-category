@@ -15,10 +15,59 @@
  */
 package petstore.category.spring;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+import petstore.category.controller.CategoryRegisterController;
+import petstore.category.controller.ReadCategoryController;
+import petstore.category.usecase.ReadCategory;
+import petstore.category.usecase.RegisterNewCategory;
+import petstore.category.usecase.port.CategoryDatastore;
+import petstore.category.usecase.port.CategoryIdGenerator;
+
 /**
  * @author fabiojose
  */
+
+// To enable spring boot application resources
+@ComponentScan()
+
+// To enable the datastore components
+@ComponentScan("petstore.category.datastore.mongodb.spring")
+
+// To enable mongodb repositories
+@EnableMongoRepositories("petstore.category.datastore.mongodb.spring")
 @Configuration
 public class Config {
 
+    @Bean
+    public static RegisterNewCategory registerNewCategoryUsecase(
+        CategoryDatastore datastore,
+        CategoryIdGenerator idGenerator) {
+
+        return new RegisterNewCategory(datastore, idGenerator);
+    }
+
+    @Bean
+    public static CategoryRegisterController categoryRegisterController(
+        RegisterNewCategory usecase){
+
+        return new CategoryRegisterController(usecase);
+    }
+
+    @Bean
+    public static ReadCategory readCategoryUsecase(
+        CategoryDatastore datastore) {
+
+        return new ReadCategory(datastore);
+    }
+
+    @Bean
+    public static ReadCategoryController readCategoryController(
+        ReadCategory usecase) {
+
+        return new ReadCategoryController(usecase);
+    }
 }

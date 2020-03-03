@@ -21,9 +21,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * @author fabiojose
  */
-@SringBootApplication
+@SpringBootApplication
 public class Entrypoint {
-    public static void main(String[] args) {
-		SpringApplication.run(Entrypoint.class, args);
-    }
+      public static void main(String[] args) {
+          SpringApplication.run(Entrypoint.class, args);
+      }
 }
