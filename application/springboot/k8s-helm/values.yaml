@@ -1,0 +1,71 @@
+replicaCount: 1
+
+image:
+  repository: newpetstore-docker-docker.bintray.io/category
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+metrics:
+  enable: true
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/actuator/prometheus"
+    prometheus.io/port: "8080"
+
+configmap:
+  SPRING_DATA_MONGODB_URI: ""
+
+liveness:
+  initialDelaySeconds: 50
+  periodSeconds: 10
+  timeoutSeconds: 10
+
+readiness:
+  initialDelaySeconds: 20
+  timeoutSeconds: 5
+
+autoscaling:
+  minReplicas: 1
+  maxReplicas: 4
+  targetAverageUtilization: 50

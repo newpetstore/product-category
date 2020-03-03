@@ -1,0 +1,12 @@
+apiVersion: v2
+name: k8s-helm
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+type: application
+
+# Chart version
+version: 0.1.0
+
+# App version
+appVersion: v1.2.0
