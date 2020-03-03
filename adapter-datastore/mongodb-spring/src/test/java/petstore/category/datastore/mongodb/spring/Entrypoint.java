@@ -18,7 +18,7 @@ package petstore.category.datastore.mongodb.spring;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import petstore.category.datastore.mongodb.spring.model.CategoryModel;
-import petstore.category.datastore.mongodb.spring.CategoryRepository;
+
 /**
  *
  * @author fabiojose
