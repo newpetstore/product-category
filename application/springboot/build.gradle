@@ -37,7 +37,7 @@ dependencies {
 
     implementation 'org.codehaus.groovy:groovy:3.0.0'
 
-    //implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.2.28'
+    implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.2.33'
 
     testImplementation project(':domain')
 
