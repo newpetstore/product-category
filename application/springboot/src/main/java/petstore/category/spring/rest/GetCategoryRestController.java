@@ -15,12 +15,17 @@
  */
 package petstore.category.spring.rest;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import petstore.category.controller.ReadCategoryController;
 import petstore.category.controller.model.CategoryResponse;
 import reactor.core.publisher.Mono;
 
@@ -30,14 +35,26 @@ import reactor.core.publisher.Mono;
 @RestController
 public class GetCategoryRestController {
 
+    @Autowired
+    ReadCategoryController controller;
+
     @GetMapping(
-        value = "/categories",
+        value = "/categories/{id}",
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     public Mono<ResponseEntity<CategoryResponse>> get(
         @PathVariable(name = "id", required = true)
         String id) {
 
-        return null;
+        return 
+        Mono.fromFuture(controller.getById(() -> id))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(
+                    ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(null)));
+
     }
 }

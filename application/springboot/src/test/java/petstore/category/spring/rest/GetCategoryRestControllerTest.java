@@ -15,18 +15,11 @@
  */
 package petstore.category.spring.rest;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.util.Optional;
-
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -38,37 +31,24 @@ import petstore.category.usecase.port.CategoryDatastore;
 /**
  * @author fabiojose
  */
+@Tag("integration")
 @SpringBootTest(
     webEnvironment = WebEnvironment.RANDOM_PORT,
     classes = Entrypoint.class
 )
-@ExtendWith(MockitoExtension.class)
 public class GetCategoryRestControllerTest {
 
-    @MockBean
+    @Autowired
     CategoryDatastore datastore;
 
     @Autowired
     WebTestClient http;
 
     @Test
-    public void should_res_404_when_there_is_id_in_the_path() {
-
-        http.get()
-            .uri("/categories")
-            .exchange()
-                .expectStatus().isNotFound();
-
-    }
-
-    @Test
     public void should_res_404_when_id_not_found() {
 
-        when(datastore.get(anyString()))
-            .thenReturn(Optional.empty());
-
         http.get()
-            .uri("/categories/catx880")
+            .uri("/categories/catx880_NotFound")
             .exchange()
                 .expectStatus().isNotFound();
     
@@ -87,8 +67,7 @@ public class GetCategoryRestControllerTest {
             .description(description)
             .build();
 
-        when(datastore.get(id))
-            .thenReturn(Optional.of(category));
+        datastore.put(category);
 
         http.get()
             .uri("/categories/" + id)
@@ -112,8 +91,7 @@ public class GetCategoryRestControllerTest {
             .description(description)
             .build();
 
-        when(datastore.get(id))
-            .thenReturn(Optional.of(category));
+        datastore.put(category);
 
         CategoryResponse expected = new CategoryResponse();
         expected.setId(id);
