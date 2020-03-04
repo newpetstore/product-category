@@ -1,6 +1,6 @@
 [ ![Download](https://api.bintray.com/packages/newpetstore/docker/category/images/download.svg) ](https://bintray.com/newpetstore/docker/category/_latestVersion)
 
-# Spring Boot Application for Pet Bounded Context
+# Spring Boot Application for Category Bounded Context
 
 ## Running
 
@@ -9,7 +9,7 @@ SPRING_DATA_MONGODB_URI='<MONGO DB URI>' \
 java -jar build/libs/springboot-1.0.0.jar
 ```
 
-> Get a free mongo instance [here](https://cloud.mongodb.com)
+> Get a free mongo instance at https://cloud.mongodb.com
 
 Or your own instance using Docker:
 
