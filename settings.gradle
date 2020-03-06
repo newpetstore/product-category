@@ -14,10 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+
 rootProject.name = 'product-category'
 
 include 'domain'
 include 'usecase'
 include 'adapter-datastore:mongodb-spring'
+include 'adapter-datastore:mongodb-quarkus'
 include 'adapter-controller'
 include 'application:springboot'
