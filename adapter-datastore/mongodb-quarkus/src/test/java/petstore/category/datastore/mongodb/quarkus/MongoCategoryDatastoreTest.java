@@ -60,6 +60,7 @@ public class MongoCategoryDatastoreTest {
     MongoClient mongo;
 
     @Container
+    @SuppressWarnings("rawtypes")
     static GenericContainer MONGO = new GenericContainer("mongo:4.0")
             .withExposedPorts(PORT);
 
